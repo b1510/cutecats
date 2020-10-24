@@ -15,7 +15,6 @@ def create_dir(folder_path):
 def save_image_from_link(image_url):
 
     create_dir("{}/{}".format(BASEPATH_FOLDER, HASHTAG))
-
     img_data = requests.get(image_url).content
     with open('data/{}/{}.jpg'.format(HASHTAG, uuid.uuid4()), 'wb') as handler:
         handler.write(img_data)
