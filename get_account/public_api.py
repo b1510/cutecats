@@ -1,5 +1,24 @@
 import requests
 import uuid
+import os
+
+
+HASHTAG = "cats"
+BASEPATH_FOLDER = "data"
+
+
+def create_dir(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+
+def save_image_from_link(image_url):
+
+    create_dir("{}/{}".format(BASEPATH_FOLDER, HASHTAG))
+
+    img_data = requests.get(image_url).content
+    with open('data/{}/{}.jpg'.format(HASHTAG, uuid.uuid4()), 'wb') as handler:
+        handler.write(img_data)
 
 
 class Parser:
@@ -24,22 +43,17 @@ class Parser:
         data = r.json()
         return data
 
-    def save_image_from_link(self, image_url):
-        img_data = requests.get(image_url).content
-        with open('data/cats/{}.jpg'.format(uuid.uuid4()), 'wb') as handler:
-            handler.write(img_data)
-
     def get_images(self):
         data = self.get_request_response()
         nodes_list = data[Parser.HASH_KEY][Parser.HASHTAG_KEY][Parser.MEDIA_KEY][Parser.LIST_KEY]
         for obj in nodes_list:
             url = obj[Parser.NODE_KEY][Parser.URL_KEY]
             if len(url) > 0:
-                self.save_image_from_link(url)
+                save_image_from_link(url)
 
 
 def main():
-    parser = Parser("cats")
+    parser = Parser(HASHTAG)
     parser.get_images()
 
 
